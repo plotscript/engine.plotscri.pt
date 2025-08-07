@@ -44,7 +44,7 @@ rand_chacha = "0.3"   # Deterministic RNG for saves
 getrandom = { version = "0.2", features = ["js"] }
 
 # Compression
-base64 = "0.21"       # Save encoding
+base64 = "0.22"       # Save encoding
 
 # Time
 chrono = { version = "0.4", features = ["serde"] }

@@ -40,7 +40,7 @@ petgraph = "0.6"      # Graph algorithms for world model
 
 # Random
 rand = { version = "0.8", features = ["std_rng"] }
-rand_chacha = "0.3"   # Deterministic RNG for saves
+rand_chacha = "0.9"   # Deterministic RNG for saves
 getrandom = { version = "0.2", features = ["js"] }
 
 # Compression

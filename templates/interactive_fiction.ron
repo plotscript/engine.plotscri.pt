@@ -1,0 +1,175 @@
+InteractiveFiction((
+    title: "My Story",
+    author: "Your Name",
+    description: Some("An interactive story with choices"),
+    version: Some("1.0.0"),
+    
+    settings: (
+        show_stats: true,
+        timed_choices: false,
+        checkpoint_saves: true,
+        hidden_qualities: false,
+        storylet_mode: true,
+    ),
+    
+    starting_storylet: "beginning",
+    starting_qualities: {
+        "health": 10,
+        "wisdom": 5,
+        "courage": 5,
+    },
+    
+    storylets: {
+        "beginning": (
+            title: "The Beginning",
+            description: "Your story starts here",
+            conditions: [],
+            content: (
+                text: "You wake up in a strange place. The last thing you remember is going to sleep in your own bed. Now you're... somewhere else entirely.",
+                choices: [
+                    (
+                        text: "Look around carefully",
+                        effects: [
+                            (Quality, "wisdom", Add, 1),
+                        ],
+                        next: Some("explore"),
+                        time_limit: None,
+                    ),
+                    (
+                        text: "Call out for help",
+                        effects: [
+                            (Quality, "courage", Add, 1),
+                        ],
+                        next: Some("call_out"),
+                        time_limit: None,
+                    ),
+                    (
+                        text: "Try to go back to sleep",
+                        effects: [],
+                        next: Some("sleep"),
+                        time_limit: None,
+                    ),
+                ],
+            ),
+            priority: 100,
+            once_only: true,
+        ),
+        "explore": (
+            title: "Exploration",
+            description: "Looking around",
+            conditions: [],
+            content: (
+                text: "You take in your surroundings. You're in what appears to be a forest clearing. Strange lights dance between the trees.",
+                choices: [
+                    (
+                        text: "Investigate the lights",
+                        effects: [],
+                        next: Some("lights"),
+                        time_limit: None,
+                    ),
+                    (
+                        text: "Find a path out",
+                        effects: [],
+                        next: Some("path"),
+                        time_limit: None,
+                    ),
+                ],
+            ),
+            priority: 50,
+            once_only: true,
+        ),
+        "call_out": (
+            title: "Calling Out",
+            description: "Seeking help",
+            conditions: [],
+            content: (
+                text: "Your voice echoes strangely in this place. After a moment, you hear footsteps approaching.",
+                choices: [
+                    (
+                        text: "Hide",
+                        effects: [],
+                        next: Some("hide"),
+                        time_limit: None,
+                    ),
+                    (
+                        text: "Stand your ground",
+                        effects: [
+                            (Quality, "courage", Add, 1),
+                        ],
+                        next: Some("meet_stranger"),
+                        time_limit: None,
+                    ),
+                ],
+            ),
+            priority: 50,
+            once_only: true,
+        ),
+        "sleep": (
+            title: "Back to Sleep",
+            description: "Trying to wake up",
+            conditions: [],
+            content: (
+                text: "You close your eyes, hoping this is all a dream. When you open them again, you're still in the same place. This is real.",
+                choices: [
+                    (
+                        text: "Accept your situation",
+                        effects: [
+                            (Quality, "wisdom", Add, 2),
+                        ],
+                        next: Some("explore"),
+                        time_limit: None,
+                    ),
+                ],
+            ),
+            priority: 50,
+            once_only: true,
+        ),
+        
+        // Add more storylets to continue the adventure
+        
+        "ending": (
+            title: "The End",
+            description: "Your journey concludes",
+            conditions: [
+                (Quality, "wisdom", GreaterThan, 10),
+            ],
+            content: (
+                text: "With the wisdom you've gained, you find your way home. The adventure has changed you forever.",
+                choices: [
+                    (
+                        text: "THE END",
+                        effects: [(GameEnd, "wise_ending", Set, 1)],
+                        next: None,
+                        time_limit: None,
+                    ),
+                ],
+            ),
+            priority: 10,
+            once_only: true,
+        ),
+    },
+    
+    qualities: {
+        "health": (
+            name: "Health",
+            description: "Your physical condition",
+            min: 0,
+            max: 20,
+            visible: true,
+        ),
+        "wisdom": (
+            name: "Wisdom",
+            description: "Your understanding of this world",
+            min: 0,
+            max: 20,
+            visible: true,
+        ),
+        "courage": (
+            name: "Courage",
+            description: "Your bravery in the face of danger",
+            min: 0,
+            max: 20,
+            visible: true,
+        ),
+    },
+))

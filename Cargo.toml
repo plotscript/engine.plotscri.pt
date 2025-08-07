@@ -1,0 +1,118 @@
+[package]
+name = "plotscript"
+version = "0.1.0"
+edition = "2021"
+authors = ["PlotScript Contributors <dev@plotscri.pt>"]
+description = "Open-source engine for interactive narratives"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/plotscript/engine.plotscri.pt"
+homepage = "https://plotscri.pt"
+documentation = "https://docs.plotscri.pt"
+readme = "README.md"
+keywords = ["interactive-fiction", "text-adventure", "visual-novel", "game-engine", "wasm"]
+categories = ["game-engines", "wasm", "parser-implementations"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# Core
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+ron = "0.8"           # Rusty Object Notation for config
+serde_yaml = "0.9"    # YAML format support
+thiserror = "1.0"     # Error handling
+
+# Parser
+pest = "2.7"          # Parser generator
+pest_derive = "2.7"
+lazy_static = "1.4"
+
+# Language Processing
+fuzzy-matcher = "0.3"  # Typo tolerance
+unicode-segmentation = "1.10"
+regex = "1.10"
+
+# Data structures
+dashmap = "5.5"       # Concurrent hashmaps
+indexmap = "2.1"      # Ordered hashmaps
+petgraph = "0.6"      # Graph algorithms for world model
+
+# Random
+rand = { version = "0.8", features = ["std_rng"] }
+rand_chacha = "0.3"   # Deterministic RNG for saves
+getrandom = { version = "0.2", features = ["js"] }
+
+# Compression
+base64 = "0.21"       # Save encoding
+
+# Time
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging
+log = "0.4"
+env_logger = "0.10"
+
+# WebAssembly dependencies
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4"
+web-sys = { version = "0.3", features = [
+    "console",
+    "Window",
+    "Document",
+    "Element",
+    "HtmlElement",
+    "Storage",
+    "Performance",
+] }
+js-sys = "0.3"
+wee_alloc = "0.4"     # Smaller WASM allocator
+console_error_panic_hook = "0.1"
+
+# Native dependencies
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tokio = { version = "1.0", features = ["full"] }
+clap = { version = "4.4", features = ["derive"] }
+colored = "2.0"
+lz4 = "1.24"          # Save file compression - native only
+
+[dev-dependencies]
+criterion = "0.5"     # Benchmarking
+proptest = "1.4"      # Property-based testing
+insta = "1.34"        # Snapshot testing
+tempfile = "3.8"      # Temporary directories for tests
+
+[build-dependencies]
+pest_generator = "2.7"
+
+[profile.release]
+opt-level = "z"       # Optimize for size
+lto = true           # Link-time optimization
+codegen-units = 1    # Single codegen unit
+
+[profile.wasm]
+inherits = "release"
+opt-level = "z"
+lto = "fat"
+panic = "abort"
+
+[[bin]]
+name = "plotscript-cli"
+path = "src/bin/plotscript.rs"
+
+[[example]]
+name = "text_adventure"
+path = "examples/text_adventure.rs"
+
+[[example]]
+name = "visual_novel"
+path = "examples/visual_novel.rs"
+
+[[example]]
+name = "interactive_fiction"
+path = "examples/interactive_fiction.rs"
+
+[[example]]
+name = "extension_demo"
+path = "examples/extension_demo.rs"

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PlotScript Engine Demo</title>
+    <style>
+        body {
+            font-family: monospace;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        #output {
+            background: #f0f0f0;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 300px;
+            white-space: pre-wrap;
+        }
+        #input {
+            width: 100%;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>PlotScript Engine Demo</h1>
+    
+    <div id="output">Loading PlotScript engine...</div>
+    
+    <input type="text" id="input" placeholder="Enter command (e.g., 'go north', 'take key', 'look')" disabled>
+    
+    <div>
+        <button id="startBtn" disabled>Start Game</button>
+        <button id="saveBtn" disabled>Save Game</button>
+        <button id="loadBtn" disabled>Load Game</button>
+    </div>
+
+    <script type="module">
+        import init, { WasmEngine, version } from './pkg/plotscript.js';
+        
+        let engine = null;
+        const output = document.getElementById('output');
+        const input = document.getElementById('input');
+        const startBtn = document.getElementById('startBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const loadBtn = document.getElementById('loadBtn');
+        
+        function addOutput(text) {
+            output.textContent += text + '\n';
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        async function initEngine() {
+            try {
+                await init();
+                
+                addOutput(`PlotScript Engine v${version()} loaded successfully!`);
+                
+                // Create engine with default config
+                engine = new WasmEngine();
+                
+                // Load a simple test script
+                const testScript = `
+game "Demo Adventure" {
+    author: "Test"
+    mode: text_adventure
+    description: "A simple demo"
+}
+
+room entrance "Entrance Hall" {
+    description: "You are in a grand entrance hall. A chandelier hangs from the ceiling."
+    exits: {
+        north: hallway
+    }
+    items: [key]
+}
+
+room hallway "Long Hallway" {
+    description: "A long hallway stretches before you. Paintings line the walls."
+    exits: {
+        south: entrance
+        east: library
+    }
+}
+
+room library "Library" {
+    description: "Shelves of books surround you. Dust motes dance in the light."
+    exits: {
+        west: hallway
+    }
+}
+
+item key "Brass Key" {
+    description: "A small brass key with intricate engravings."
+    takeable: true
+}
+                `;
+                
+                engine.loadScript(testScript);
+                addOutput('\nGame script loaded!');
+                
+                // Enable controls
+                startBtn.disabled = false;
+                input.disabled = false;
+                saveBtn.disabled = false;
+                loadBtn.disabled = false;
+                
+            } catch (err) {
+                addOutput(`Error: ${err}`);
+            }
+        }
+        
+        startBtn.addEventListener('click', () => {
+            try {
+                const response = JSON.parse(engine.start());
+                output.textContent = '';
+                addOutput(response.text);
+            } catch (err) {
+                addOutput(`Error: ${err}`);
+            }
+        });
+        
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && input.value.trim()) {
+                try {
+                    const response = JSON.parse(engine.processInput(input.value));
+                    addOutput(`\n> ${input.value}`);
+                    addOutput(response.text);
+                    input.value = '';
+                } catch (err) {
+                    addOutput(`Error: ${err}`);
+                }
+            }
+        });
+        
+        saveBtn.addEventListener('click', () => {
+            try {
+                const response = JSON.parse(engine.save(1));
+                addOutput(`\n${response.text}`);
+            } catch (err) {
+                addOutput(`Error: ${err}`);
+            }
+        });
+        
+        loadBtn.addEventListener('click', () => {
+            try {
+                const response = JSON.parse(engine.load(1));
+                addOutput(`\n${response.text}`);
+            } catch (err) {
+                addOutput(`Error: ${err}`);
+            }
+        });
+        
+        // Initialize the engine
+        initEngine();
+    </script>
+</body>
+</html>

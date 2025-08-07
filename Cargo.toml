@@ -34,7 +34,7 @@ unicode-segmentation = "1.10"
 regex = "1.10"
 
 # Data structures
-dashmap = "5.5"       # Concurrent hashmaps
+dashmap = "6.1"       # Concurrent hashmaps
 indexmap = "2.1"      # Ordered hashmaps
 petgraph = "0.6"      # Graph algorithms for world model
 

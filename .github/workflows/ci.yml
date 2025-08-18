@@ -18,7 +18,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         rust: [stable, nightly]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
     
     - name: Setup Rust
       uses: actions-rs/toolchain@v1
@@ -67,7 +67,7 @@ jobs:
     name: WebAssembly Build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
     
     - name: Setup Rust
       uses: actions-rs/toolchain@v1
@@ -93,7 +93,7 @@ jobs:
     name: Benchmarks
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
     
     - name: Setup Rust
       uses: actions-rs/toolchain@v1
@@ -109,7 +109,7 @@ jobs:
     name: Code Coverage
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
     
     - name: Setup Rust
       uses: actions-rs/toolchain@v1

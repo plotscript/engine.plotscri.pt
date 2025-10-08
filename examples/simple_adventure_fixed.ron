@@ -1,0 +1,35 @@
+(
+    format: "TextAdventure",
+    title: "Simple Test",
+    author: "Test Author",
+    description: Some("A simple test game"),
+    version: Some("1.0"),
+    
+    settings: (
+        parser_mode: Natural,
+        command_aliases: true,
+        darkness_system: false,
+        inventory_limits: false,
+        max_inventory: None,
+    ),
+    
+    starting_location: "room1",
+    
+    locations: {
+        "room1": (
+            name: "Test Room",
+            description: "A simple test room.",
+            exits: {},
+            items: [],
+            characters: [],
+            dark: Some(false),
+            first_visit: None,
+            events: None,
+        ),
+    },
+    
+    items: {},
+    characters: {},
+    vocabulary: None,
+    events: None,
+)

@@ -1,0 +1,110 @@
+VisualNovel((
+    title: "My Visual Novel",
+    author: "Your Name",
+    description: Some("A romantic visual novel"),
+    version: Some("1.0.0"),
+    
+    settings: (
+        auto_mode_available: true,
+        skip_mode_available: true,
+        text_speed: Medium,
+        character_portraits: true,
+        voice_acting: false,
+    ),
+    
+    starting_scene: "opening",
+    
+    scenes: {
+        "opening": (
+            name: "Opening Scene",
+            background: Some("backgrounds/school.jpg"),
+            music: Some("music/theme.mp3"),
+            characters: [],
+            dialogue: [
+                (
+                    speaker: None,
+                    text: "Welcome to your visual novel!",
+                    sprite: None,
+                    position: None,
+                    effect: Some(FadeIn),
+                ),
+                (
+                    speaker: Some("???"),
+                    text: "Hello! I'm your guide.",
+                    sprite: Some("characters/guide_happy.png"),
+                    position: Some(Center),
+                    effect: Some(SlideIn),
+                ),
+            ],
+            choices: Some([
+                (
+                    text: "Nice to meet you!",
+                    next_scene: "chapter1",
+                    conditions: None,
+                    effects: Some([(Variable, "friendship", Add, 1)]),
+                ),
+                (
+                    text: "Who are you?",
+                    next_scene: "chapter1",
+                    conditions: None,
+                    effects: None,
+                ),
+            ]),
+            next_scene: None,
+        ),
+        "chapter1": (
+            name: "Chapter 1",
+            background: Some("backgrounds/classroom.jpg"),
+            music: Some("music/daily.mp3"),
+            characters: ["guide"],
+            dialogue: [
+                (
+                    speaker: Some("Guide"),
+                    text: "Let's start your adventure!",
+                    sprite: Some("characters/guide_smile.png"),
+                    position: Some(Center),
+                    effect: None,
+                ),
+            ],
+            choices: None,
+            next_scene: Some("ending"),
+        ),
+        "ending": (
+            name: "The End",
+            background: Some("backgrounds/sunset.jpg"),
+            music: Some("music/ending.mp3"),
+            characters: [],
+            dialogue: [
+                (
+                    speaker: None,
+                    text: "Thanks for playing!",
+                    sprite: None,
+                    position: None,
+                    effect: Some(FadeOut),
+                ),
+            ],
+            choices: None,
+            next_scene: None,
+        ),
+    },
+    
+    characters: {
+        "guide": (
+            name: "Guide",
+            description: "Your helpful guide",
+            sprites: {
+                "happy": "characters/guide_happy.png",
+                "smile": "characters/guide_smile.png",
+                "sad": "characters/guide_sad.png",
+            },
+            voice: None,
+        ),
+    },
+    
+    variables: {
+        "friendship": 0,
+    },
+    
+    achievements: None,
+    gallery: None,
+))

@@ -1,0 +1,158 @@
+// PlotScript Grammar Definition
+// This defines the syntax for the PlotScript language
+
+// Whitespace and comments
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+COMMENT = _{ "//" ~ (!"\n" ~ ANY)* ~ "\n" | "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
+// Main file structure
+file = { SOI ~ (game_definition | room | character | item | event | function | import)* ~ EOI }
+
+// Game definition
+game_definition = { "game" ~ string ~ "{" ~ game_property* ~ "}" }
+game_property = {
+    ("author" ~ ":" ~ string) |
+    ("version" ~ ":" ~ string) |
+    ("mode" ~ ":" ~ game_mode) |
+    ("description" ~ ":" ~ string) |
+    ("config" ~ "{" ~ config_property* ~ "}")
+}
+
+game_mode = { "text_adventure" | "visual_novel" | "interactive_fiction" }
+
+config_property = { identifier ~ ":" ~ value }
+
+// Room/Location definition
+room = { "room" ~ identifier ~ string? ~ "{" ~ room_property* ~ "}" }
+room_property = {
+    ("description" ~ ":" ~ string) |
+    ("exits" ~ "{" ~ exit_list ~ "}") |
+    ("items" ~ ":" ~ "[" ~ identifier_list ~ "]") |
+    ("dark" ~ ":" ~ boolean) |
+    ("visited" ~ ":" ~ boolean) |
+    ("on_enter" ~ "{" ~ statement* ~ "}") |
+    ("on_exit" ~ "{" ~ statement* ~ "}")
+}
+
+exit_list = { (direction ~ ":" ~ identifier ~ ","?)* }
+direction = { "north" | "south" | "east" | "west" | "up" | "down" | "in" | "out" | "ne" | "nw" | "se" | "sw" }
+
+// Character definition
+character = { "character" ~ identifier ~ string? ~ "{" ~ character_property* ~ "}" }
+character_property = {
+    ("description" ~ ":" ~ string) |
+    ("location" ~ ":" ~ identifier) |
+    ("dialogue" ~ "{" ~ dialogue_tree ~ "}") |
+    ("state" ~ ":" ~ string) |
+    ("relationship" ~ ":" ~ number)
+}
+
+dialogue_tree = { dialogue_node* }
+dialogue_node = { string ~ ("=>" ~ dialogue_response)? }
+dialogue_response = { string | "{" ~ choice_list ~ "}" }
+choice_list = { (string ~ "=>" ~ statement)* }
+
+// Item definition
+item = { "item" ~ identifier ~ string? ~ "{" ~ item_property* ~ "}" }
+item_property = {
+    ("description" ~ ":" ~ string) |
+    ("location" ~ ":" ~ identifier) |
+    ("takeable" ~ ":" ~ boolean) |
+    ("weight" ~ ":" ~ number) |
+    ("on_take" ~ "{" ~ statement* ~ "}") |
+    ("on_use" ~ "{" ~ statement* ~ "}") |
+    ("on_examine" ~ "{" ~ statement* ~ "}")
+}
+
+// Event definition
+event = { "event" ~ identifier ~ "{" ~ event_property* ~ "}" }
+event_property = {
+    ("trigger" ~ ":" ~ trigger_condition) |
+    ("action" ~ "{" ~ statement* ~ "}")
+}
+
+trigger_condition = { 
+    ("turn" ~ "==" ~ number) |
+    ("variable" ~ identifier ~ operator ~ value) |
+    ("in_room" ~ identifier) |
+    ("has_item" ~ identifier)
+}
+
+// Function definition
+function = { "function" ~ identifier ~ "(" ~ parameter_list? ~ ")" ~ "{" ~ statement* ~ "}" }
+parameter_list = { identifier ~ ("," ~ identifier)* }
+
+// Statements
+statement = {
+    assignment |
+    if_statement |
+    while_loop |
+    for_loop |
+    function_call |
+    print_statement |
+    return_statement |
+    command
+}
+
+assignment = { identifier ~ "=" ~ expression }
+if_statement = { "if" ~ expression ~ "{" ~ statement* ~ "}" ~ ("else" ~ "{" ~ statement* ~ "}")? }
+while_loop = { "while" ~ expression ~ "{" ~ statement* ~ "}" }
+for_loop = { "for" ~ identifier ~ "in" ~ expression ~ "{" ~ statement* ~ "}" }
+function_call = { identifier ~ "(" ~ argument_list? ~ ")" }
+print_statement = { "print" ~ expression }
+return_statement = { "return" ~ expression? }
+
+argument_list = { expression ~ ("," ~ expression)* }
+
+// Commands (for game actions)
+command = {
+    ("move" ~ identifier ~ "to" ~ identifier) |
+    ("give" ~ identifier ~ "to" ~ identifier) |
+    ("unlock" ~ identifier) |
+    ("lock" ~ identifier) |
+    ("reveal" ~ identifier) |
+    ("hide" ~ identifier) |
+    ("play_sound" ~ string) |
+    ("show_image" ~ string)
+}
+
+// Expressions
+expression = { or_expr }
+
+or_expr = { and_expr ~ ("||" ~ and_expr)* }
+and_expr = { comparison ~ ("&&" ~ comparison)* }
+comparison = { addition ~ (operator ~ addition)* }
+addition = { multiplication ~ (("+"|"-") ~ multiplication)* }
+multiplication = { unary ~ (("*"|"/"|"%") ~ unary)* }
+unary = { ("!"|"-")? ~ primary }
+
+primary = {
+    number |
+    string |
+    boolean |
+    identifier |
+    function_call |
+    "(" ~ expression ~ ")" |
+    list |
+    map
+}
+
+operator = { "==" | "!=" | "<=" | ">=" | "<" | ">" }
+
+// Values
+value = { number | string | boolean | identifier | list | map }
+
+list = { "[" ~ (value ~ ("," ~ value)*)? ~ "]" }
+map = { "{" ~ (map_entry ~ ("," ~ map_entry)*)? ~ "}" }
+map_entry = { identifier ~ ":" ~ value }
+
+// Basic types
+identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+identifier_list = { identifier ~ ("," ~ identifier)* }
+
+number = @{ "-"? ~ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
+string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+boolean = { "true" | "false" }
+
+// Import statements
+import = { "import" ~ string }

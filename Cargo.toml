@@ -19,7 +19,7 @@ crate-type = ["cdylib", "rlib"]
 # Core
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-ron = "0.8"           # Rusty Object Notation for config
+ron = "0.12"           # Rusty Object Notation for config
 serde_yaml = "0.9"    # YAML format support
 thiserror = "1.0"     # Error handling
 
